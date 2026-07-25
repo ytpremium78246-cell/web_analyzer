@@ -1,0 +1,25 @@
+# Dependencies — never upload these
+node_modules/
+
+# Database file — cloud host uses its own storage
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Temp
+*.tmp
+
+# Environment secrets — NEVER upload to GitHub
+.env

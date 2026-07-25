@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in to your Traffic Analytics Platform dashboard">
+  <title>Sign In — Traffic Analytics Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --bg: #0a0a0f;
+      --surface: #11111a;
+      --card: #16161f;
+      --panel: #1c1c28;
+      --border: rgba(255,255,255,0.08);
+      --text: #f1f1f8;
+      --text-muted: #9b9bbb;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* Animated background */
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+    }
+    .orb-1 { width: 600px; height: 600px; background: #6366f1; top: -200px; left: -200px; animation: float 8s ease-in-out infinite; }
+    .orb-2 { width: 500px; height: 500px; background: #06b6d4; bottom: -200px; right: -100px; animation: float 10s ease-in-out infinite reverse; }
+    .orb-3 { width: 300px; height: 300px; background: #8b5cf6; top: 50%; left: 50%; animation: float 6s ease-in-out infinite 2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -20px) scale(1.05); }
+      66% { transform: translate(-20px, 30px) scale(0.95); }
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+    }
+
+    .login-card {
+      background: rgba(22,22,31,0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .login-logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 30px rgba(99,102,241,0.4);
+    }
+
+    .login-logo-text h1 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .login-logo-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .login-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    input::placeholder { color: rgba(155,155,187,0.4); }
+
+    .error-msg {
+      display: none;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--danger);
+      margin-bottom: 16px;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(99,102,241,0.3);
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .btn-login:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(99,102,241,0.5); }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: 0.7; cursor: wait; }
+
+    .btn-login .spinner-inline {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .login-footer {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .login-features {
+      margin-top: 32px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-icon">📊</div>
+        <div class="login-logo-text">
+          <h1>Traffic Analytics</h1>
+          <p>Self-Hosted Intelligence Platform</p>
+        </div>
+      </div>
+
+      <h2>Welcome back</h2>
+      <p class="login-subtitle">Sign in to your analytics dashboard</p>
+
+      <div id="error-msg" class="error-msg"></div>
+
+      <form id="login-form" autocomplete="on">
+        <div class="form-group">
+          <label for="username">Username or Email</label>
+          <input id="username" name="username" type="text" placeholder="admin" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="btn-login" id="submit-btn">
+          <span id="btn-text">Sign In</span>
+          <div class="spinner-inline" id="btn-spinner"></div>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <span>Traffic Analytics Platform v1.0</span>
+        <span>Self-Hosted</span>
+      </div>
+    </div>
+
+    <div class="login-features">
+      <div class="feature-pill">⚡ Real-time</div>
+      <div class="feature-pill">🔒 Self-hosted</div>
+      <div class="feature-pill">📊 Analytics</div>
+      <div class="feature-pill">🌍 Geo tracking</div>
+    </div>
+  </div>
+
+  <script>
+    // ── CSRF-aware login flow ──────────────────────────────────
+    // 1. GET /api/csrf-token  → sets cookie + returns token value
+    // 2. POST /api/auth/login → sends token in X-CSRF-Token header
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errEl    = document.getElementById('error-msg');
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText  = document.getElementById('btn-text');
+      const spinner  = document.getElementById('btn-spinner');
+
+      errEl.style.display = 'none';
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      spinner.style.display = 'block';
+
+      try {
+        // Step 1 — fetch CSRF token (sets the csrf_token cookie too)
+        const csrfResp = await fetch('/api/csrf-token', {
+          credentials: 'same-origin',
+        });
+        if (!csrfResp.ok) throw new Error('Could not fetch security token. Try refreshing.');
+        const { csrfToken } = await csrfResp.json();
+
+        // Step 2 — login with CSRF token in header
+        const resp = await fetch('/api/auth/login', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+          },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await resp.json();
+
+        if (!resp.ok) throw new Error(data.error || 'Login failed');
+
+        localStorage.setItem('ta_token', data.token);
+        window.location.href = '/dashboard';
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        btnText.style.display = 'block';
+        spinner.style.display = 'none';
+      }
+    });
+
+    // Redirect if already logged in
+    if (localStorage.getItem('ta_token')) {
+      fetch('/api/auth/me', {
+        credentials: 'same-origin',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('ta_token') }
+      }).then(r => { if (r.ok) window.location.href = '/dashboard'; });
+    }
+  </script>
+</body>
+</html>

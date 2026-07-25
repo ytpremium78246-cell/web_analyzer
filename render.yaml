@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: traffic-analytics
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.5.0
+      - key: JWT_SECRET
+        generateValue: true     # Render auto-generates a secure random value
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: ChangeMe123!     # CHANGE THIS in Render dashboard after deploy
+      - key: ADMIN_EMAIL
+        value: admin@example.com
+      - key: PORT
+        value: 10000            # Render always uses port 10000
+      - key: GEOIP_PROVIDER
+        value: ipapi
+      - key: DATA_RETENTION_DAYS
+        value: "365"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: ENABLE_IP_LOGGING
+        value: "true"
+      - key: ANONYMIZE_IPS
+        value: "false"
+      - key: SESSION_TIMEOUT_MINUTES
+        value: "30"
