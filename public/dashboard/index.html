@@ -107,6 +107,28 @@
           <option value="365">Last year</option>
         </select>
 
+        <!-- Export All Data Dropdown -->
+        <div style="position:relative">
+          <button class="btn btn-secondary" id="global-export-btn" style="font-size:12px;padding:6px 12px;display:flex;align-items:center;gap:6px">
+            <span>⬇</span> <span>Export All</span>
+          </button>
+          <div id="global-export-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--radius-md);min-width:210px;z-index:100;box-shadow:var(--shadow-lg)">
+            <div style="padding:8px 12px;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border-subtle);text-transform:uppercase;letter-spacing:0.5px">Full Telemetry Archive</div>
+            <a href="#" class="global-export-opt" data-type="all" data-fmt="xlsx" style="display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;color:var(--text-primary);text-decoration:none">
+              <span>📊</span> Complete Excel (.xlsx)
+            </a>
+            <a href="#" class="global-export-opt" data-type="all" data-fmt="json" style="display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;color:var(--text-primary);text-decoration:none">
+              <span>📋</span> Complete JSON Dump
+            </a>
+            <div style="padding:8px 12px;font-size:11px;font-weight:700;color:var(--text-muted);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);text-transform:uppercase;letter-spacing:0.5px">Individual Datasets</div>
+            <a href="#" class="global-export-opt" data-type="sessions" data-fmt="csv" style="display:block;padding:8px 14px;font-size:12px;color:var(--text-secondary);text-decoration:none">📄 Sessions (CSV)</a>
+            <a href="#" class="global-export-opt" data-type="visitors" data-fmt="csv" style="display:block;padding:8px 14px;font-size:12px;color:var(--text-secondary);text-decoration:none">👥 Visitors (CSV)</a>
+            <a href="#" class="global-export-opt" data-type="page-views" data-fmt="csv" style="display:block;padding:8px 14px;font-size:12px;color:var(--text-secondary);text-decoration:none">📑 Page Views (CSV)</a>
+            <a href="#" class="global-export-opt" data-type="performance" data-fmt="csv" style="display:block;padding:8px 14px;font-size:12px;color:var(--text-secondary);text-decoration:none">⚡ Web Vitals (CSV)</a>
+            <a href="#" class="global-export-opt" data-type="events" data-fmt="csv" style="display:block;padding:8px 14px;font-size:12px;color:var(--text-secondary);text-decoration:none">⚡ All Events (CSV)</a>
+          </div>
+        </div>
+
         <!-- Live count chip -->
         <div style="display:flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:20px;padding:5px 12px">
           <div class="live-dot"></div>

@@ -258,6 +258,35 @@ const App = (() => {
     });
   }
 
+  // ── Global Export Button ───────────────────────────────────
+  function initExportButton() {
+    const btn = document.getElementById('global-export-btn');
+    const dropdown = document.getElementById('global-export-dropdown');
+    if (!btn || !dropdown) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.addEventListener('click', () => {
+      if (dropdown) dropdown.style.display = 'none';
+    });
+
+    document.querySelectorAll('.global-export-opt').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        dropdown.style.display = 'none';
+        const type = el.dataset.type;
+        const fmt = el.dataset.fmt;
+        const site = Store.get('selectedWebsite');
+        const params = { format: fmt, ...(site?.id ? { websiteId: site.id } : {}) };
+        showToast(`Preparing ${type === 'all' ? 'Complete Data Archive' : type} download...`, 'info');
+        window.open(API.exportUrl(type, params));
+      });
+    });
+  }
+
   // ── Sidebar nav ────────────────────────────────────────────
   function initNav() {
     document.querySelectorAll('.nav-item[data-page]').forEach(el => {
@@ -284,6 +313,7 @@ const App = (() => {
     initNav();
     initWebsiteSelector();
     initDateRange();
+    initExportButton();
 
     window.addEventListener('hashchange', router);
     await router();
