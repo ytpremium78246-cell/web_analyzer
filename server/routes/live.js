@@ -63,7 +63,8 @@ router.get('/summary', requireAuth, (req, res) => {
 
   const liveSessions = all(`
     SELECT id, visitor_id, started_at, country, country_code, city,
-           browser, device_type, page_views, max_scroll_depth, landing_url
+           browser, device_type, page_views, max_scroll_depth, landing_url,
+           is_bot, is_headless, bot_name
     FROM sessions
     WHERE status = 'active' ${filter}
     ORDER BY started_at DESC LIMIT 50

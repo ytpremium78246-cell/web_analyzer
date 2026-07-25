@@ -152,9 +152,44 @@
     return Math.abs(hash).toString(36);
   }
 
+  function detectBotClient() {
+    const ua = navigator.userAgent || '';
+    const isWebdriver = !!navigator.webdriver;
+    const isHeadlessUA = /HeadlessChrome|Puppeteer|Playwright|Selenium|PhantomJS|Cypress/i.test(ua);
+    const isPhantom = !!(window.callPhantom || window._phantom);
+    const isDomAutomation = !!(window.domAutomation || window.domAutomationController);
+    const noPluginsOnChrome = /Chrome/i.test(ua) && (!navigator.plugins || navigator.plugins.length === 0);
+    const noLanguages = !navigator.languages || navigator.languages.length === 0;
+
+    const isHeadless = isWebdriver || isHeadlessUA || isPhantom || isDomAutomation || noPluginsOnChrome || noLanguages;
+
+    let botName = null;
+    if (isHeadlessUA) {
+      const match = ua.match(/(Puppeteer|Playwright|Selenium|PhantomJS|Cypress|HeadlessChrome)/i);
+      botName = match ? match[1] : 'Headless Browser';
+    } else if (isWebdriver) {
+      botName = 'Webdriver Automation';
+    } else if (isPhantom) {
+      botName = 'PhantomJS';
+    } else if (/Googlebot/i.test(ua)) {
+      botName = 'Googlebot';
+    } else if (/bingbot/i.test(ua)) {
+      botName = 'Bingbot';
+    } else if (/bot|crawler|spider/i.test(ua)) {
+      botName = 'Web Crawler';
+    } else if (isHeadless) {
+      botName = 'Automated Headless Bot';
+    }
+
+    const isBot = isHeadless || !!botName;
+
+    return { isBot, isHeadless, botName };
+  }
+
   // ── Device Information ────────────────────────────────────
   function getDeviceInfo() {
     const ua = navigator.userAgent;
+    const botInfo = detectBotClient();
     return {
       userAgent: ua,
       language: navigator.language || navigator.userLanguage,
@@ -167,6 +202,7 @@
       maxTouchPoints: navigator.maxTouchPoints || 0,
       darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       reducedMotion: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      ...botInfo,
     };
   }
 
@@ -724,6 +760,7 @@
         const resp = await fetch((_config.endpoint || '') + '/api/track/init', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          keepalive: true,
           body: JSON.stringify({
             apiKey: _config.apiKey,
             websiteId: _config.websiteId,

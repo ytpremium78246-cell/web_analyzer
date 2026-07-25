@@ -12,8 +12,10 @@
  */
 function parseUserAgent(ua) {
   if (!ua) {
-    return { browser: 'Unknown', browserVersion: null, engine: null, os: 'Unknown', osVersion: null, deviceType: 'Desktop' };
+    return { browser: 'Unknown', browserVersion: null, engine: null, os: 'Unknown', osVersion: null, deviceType: 'Desktop', isBot: false, isHeadless: false, botName: null };
   }
+
+  const botInfo = detectBot(ua);
 
   return {
     browser: detectBrowser(ua),
@@ -22,7 +24,38 @@ function parseUserAgent(ua) {
     os: detectOS(ua),
     osVersion: detectOSVersion(ua),
     deviceType: detectDeviceType(ua),
+    ...botInfo,
   };
+}
+
+function detectBot(ua) {
+  if (!ua) return { isBot: false, isHeadless: false, botName: null };
+
+  const botPatterns = [
+    { re: /HeadlessChrome/i, name: 'Headless Chrome', isHeadless: true },
+    { re: /Puppeteer/i, name: 'Puppeteer', isHeadless: true },
+    { re: /Playwright/i, name: 'Playwright', isHeadless: true },
+    { re: /Selenium/i, name: 'Selenium', isHeadless: true },
+    { re: /PhantomJS/i, name: 'PhantomJS', isHeadless: true },
+    { re: /Cypress/i, name: 'Cypress', isHeadless: true },
+    { re: /Googlebot/i, name: 'Googlebot', isHeadless: false },
+    { re: /bingbot/i, name: 'Bingbot', isHeadless: false },
+    { re: /YandexBot/i, name: 'YandexBot', isHeadless: false },
+    { re: /DuckDuckBot/i, name: 'DuckDuckBot', isHeadless: false },
+    { re: /Baiduspider/i, name: 'Baiduspider', isHeadless: false },
+    { re: /AhrefsBot/i, name: 'AhrefsBot', isHeadless: false },
+    { re: /SemrushBot/i, name: 'SemrushBot', isHeadless: false },
+    { re: /curl|python-requests|wget|axios|got|node-fetch|PostmanRuntime/i, name: 'HTTP Automation / Bot', isHeadless: false },
+    { re: /bot|crawler|spider|slurp|facebookexternalhit/i, name: 'Web Crawler', isHeadless: false },
+  ];
+
+  for (const { re, name, isHeadless } of botPatterns) {
+    if (re.test(ua)) {
+      return { isBot: true, isHeadless, botName: name };
+    }
+  }
+
+  return { isBot: false, isHeadless: false, botName: null };
 }
 
 function detectBrowser(ua) {

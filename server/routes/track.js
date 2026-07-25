@@ -75,7 +75,7 @@ router.post('/init', async (req, res) => {
       // Device info from SDK
       screenResolution, viewportSize, devicePixelRatio, colorDepth,
       orientation, touchSupport, maxTouchPoints, darkMode, reducedMotion, language,
-      userAgent,
+      userAgent, isBot: clientIsBot, isHeadless: clientIsHeadless, botName: clientBotName,
     } = req.body;
 
     const site = validateApiKey(apiKey, websiteId);
@@ -84,6 +84,10 @@ router.post('/init', async (req, res) => {
     const ip = getClientIp(req);
     const geo = await lookupIp(config.enableIpLogging ? ip : null);
     const ua = parseUserAgent(userAgent || req.headers['user-agent']);
+
+    const isBot = (clientIsBot || ua.isBot) ? 1 : 0;
+    const isHeadless = (clientIsHeadless || ua.isHeadless) ? 1 : 0;
+    const botName = clientBotName || ua.botName || (isHeadless ? 'Headless Browser' : null);
 
     // Referrer domain
     let referrerDomain = null;
@@ -103,12 +107,14 @@ router.post('/init', async (req, res) => {
     if (!visitor) {
       run(`
         INSERT INTO visitors (id, website_id, fingerprint, ip_address, country, country_code, region, city, isp, asn, timezone, language,
-          browser, browser_version, browser_engine, os, os_version, device_type, screen_resolution, viewport_size, touch_support, dark_mode)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          browser, browser_version, browser_engine, os, os_version, device_type, screen_resolution, viewport_size, touch_support, dark_mode,
+          is_bot, is_headless, bot_name)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [visitorId, site.id, n(fingerprint), n(ip),
         n(geo.country), n(geo.country_code), n(geo.region), n(geo.city), n(geo.isp), n(geo.asn), n(geo.timezone), n(language),
         n(ua.browser), n(ua.browserVersion), n(ua.browserEngine), n(ua.os), n(ua.osVersion), n(ua.deviceType),
-        n(screenResolution), n(viewportSize), touchSupport ? 1 : 0, darkMode ? 1 : 0]);
+        n(screenResolution), n(viewportSize), touchSupport ? 1 : 0, darkMode ? 1 : 0,
+        isBot, isHeadless, n(botName)]);
     } else {
       // Update visitor with latest info
       run(`
@@ -119,11 +125,13 @@ router.post('/init', async (req, res) => {
           is_returning = 1,
           ip_address = ?, country = ?, country_code = ?, region = ?, city = ?, isp = ?, asn = ?, timezone = ?, language = ?,
           browser = ?, browser_version = ?, browser_engine = ?, os = ?, os_version = ?, device_type = ?,
-          screen_resolution = ?, viewport_size = ?, touch_support = ?, dark_mode = ?
+          screen_resolution = ?, viewport_size = ?, touch_support = ?, dark_mode = ?,
+          is_bot = ?, is_headless = ?, bot_name = ?
         WHERE id = ?
       `, [n(ip), n(geo.country), n(geo.country_code), n(geo.region), n(geo.city), n(geo.isp), n(geo.asn), n(geo.timezone), n(language),
         n(ua.browser), n(ua.browserVersion), n(ua.browserEngine), n(ua.os), n(ua.osVersion), n(ua.deviceType),
-        n(screenResolution), n(viewportSize), touchSupport ? 1 : 0, darkMode ? 1 : 0, visitorId]);
+        n(screenResolution), n(viewportSize), touchSupport ? 1 : 0, darkMode ? 1 : 0,
+        isBot, isHeadless, n(botName), visitorId]);
     }
 
     // ── Session number for this visitor ──
@@ -143,8 +151,8 @@ router.post('/init', async (req, res) => {
         browser, browser_version, browser_engine, os, os_version, device_type,
         screen_resolution, viewport_size, device_pixel_ratio, color_depth,
         orientation, touch_support, max_touch_points, dark_mode, reduced_motion, language, user_agent,
-        is_returning
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        is_returning, is_bot, is_headless, bot_name
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       sessionId, site.id, visitorId, sessionNumber,
       n(referrer), n(referrerDomain), n(utmSource), n(utmMedium), n(utmCampaign), n(utmTerm), n(utmContent),
@@ -154,7 +162,7 @@ router.post('/init', async (req, res) => {
       n(screenResolution), n(viewportSize), n(devicePixelRatio), n(colorDepth),
       n(orientation), touchSupport ? 1 : 0, maxTouchPoints || 0,
       darkMode ? 1 : 0, reducedMotion ? 1 : 0, n(language), n(userAgent),
-      isReturning ? 1 : 0,
+      isReturning ? 1 : 0, isBot, isHeadless, n(botName),
     ]);
 
     // Initialize related tables
@@ -175,6 +183,9 @@ router.post('/init', async (req, res) => {
       referrer: referrerDomain,
       landing: landingUrl,
       isReturning,
+      isBot: isBot === 1,
+      isHeadless: isHeadless === 1,
+      botName,
       timestamp: new Date().toISOString(),
     }, site.id);
 

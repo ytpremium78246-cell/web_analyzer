@@ -63,7 +63,11 @@ CREATE TABLE IF NOT EXISTS visitors (
   screen_resolution TEXT,
   viewport_size     TEXT,
   touch_support     INTEGER DEFAULT 0,
-  dark_mode         INTEGER DEFAULT 0
+  dark_mode         INTEGER DEFAULT 0,
+  -- Bot & Headless detection
+  is_bot            INTEGER DEFAULT 0,
+  is_headless       INTEGER DEFAULT 0,
+  bot_name          TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_visitors_website ON visitors(website_id);
 CREATE INDEX IF NOT EXISTS idx_visitors_fingerprint ON visitors(fingerprint);
@@ -132,7 +136,11 @@ CREATE TABLE IF NOT EXISTS sessions (
   language              TEXT,
   user_agent            TEXT,
   -- Visitor type
-  is_returning          INTEGER NOT NULL DEFAULT 0
+  is_returning          INTEGER NOT NULL DEFAULT 0,
+  -- Bot & Headless detection
+  is_bot                INTEGER DEFAULT 0,
+  is_headless           INTEGER DEFAULT 0,
+  bot_name              TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_website ON sessions(website_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_visitor ON sessions(visitor_id);

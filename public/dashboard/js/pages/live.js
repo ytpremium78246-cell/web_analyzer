@@ -204,13 +204,15 @@ App.registerPage('live', {
 
     const colors = { green: '#10b981', red: '#ef4444', purple: '#6366f1', cyan: '#06b6d4', blue: '#3b82f6', amber: '#f59e0b' };
     const color = colors[evt.color] || '#6366f1';
+    const isBot = evt.isBot || evt.isHeadless;
+    const botBadge = isBot ? `<span style="font-size:10px;padding:1px 4px;border-radius:3px;background:rgba(239,68,68,0.2);color:#ef4444;font-weight:600">🤖 ${App.escapeHtml(evt.botName || 'Bot')}</span>` : '';
 
     const item = document.createElement('div');
     item.className = 'feed-item';
     item.innerHTML = `
       <div class="feed-icon" style="background:${color}20;color:${color}">${evt.icon || '●'}</div>
       <div class="feed-body">
-        <div class="feed-title">${App.escapeHtml(evt.label || evt.name || evt.event_name || 'Event')}</div>
+        <div class="feed-title">${App.escapeHtml(evt.label || evt.name || evt.event_name || 'Event')} ${botBadge}</div>
         <div class="feed-meta">
           ${evt.country ? App.flagEmoji(evt.country) + ' ' : ''}
           ${App.escapeHtml(evt.browser || '')} ${App.escapeHtml(evt.device || '')}
@@ -235,20 +237,30 @@ App.registerPage('live', {
       return;
     }
 
-    list.innerHTML = sessions.slice(0, 30).map(s => `
+    list.innerHTML = sessions.slice(0, 30).map(s => {
+      const isBot = s.is_bot || s.is_headless;
+      const botBadge = isBot
+        ? `<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);font-weight:600">🤖 ${App.escapeHtml(s.bot_name || 'Bot')}</span>`
+        : '';
+
+      return `
       <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border-subtle);cursor:pointer"
            onclick="App.navigate('visitor-report',{id:'${s.id}'})">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-success);animation:live-pulse 2s infinite;flex-shrink:0"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:${isBot ? '#ef4444' : 'var(--color-success)'};animation:live-pulse 2s infinite;flex-shrink:0"></div>
         <span style="font-size:1.3em">${App.flagEmoji(s.country_code)}</span>
         <div style="flex:1;min-width:0">
-          <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.escapeHtml(s.landing_url || '/')}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${App.escapeHtml(s.landing_url || '/')}</div>
+            ${botBadge}
+          </div>
           <div style="font-size:11px;color:var(--text-muted)">${App.escapeHtml(s.browser || '')} · ${App.escapeHtml(s.device_type || '')}</div>
         </div>
         <div style="text-align:right;flex-shrink:0">
           <div style="font-size:11px;font-weight:600">${s.page_views} pg</div>
           <div style="font-size:10px;color:var(--text-muted)">${App.timeAgo(s.started_at)}</div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   },
 
   renderLocations(sessions) {

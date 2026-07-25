@@ -64,8 +64,8 @@ function initSchema() {
 
 function migrateVisitorsTable() {
   try {
-    const cols = db.prepare("PRAGMA table_info(visitors)").all().map(c => c.name);
-    const newCols = [
+    const vCols = db.prepare("PRAGMA table_info(visitors)").all().map(c => c.name);
+    const newVCols = [
       ['ip_address', 'TEXT'],
       ['isp', 'TEXT'],
       ['asn', 'TEXT'],
@@ -77,16 +77,33 @@ function migrateVisitorsTable() {
       ['viewport_size', 'TEXT'],
       ['touch_support', 'INTEGER DEFAULT 0'],
       ['dark_mode', 'INTEGER DEFAULT 0'],
+      ['is_bot', 'INTEGER DEFAULT 0'],
+      ['is_headless', 'INTEGER DEFAULT 0'],
+      ['bot_name', 'TEXT'],
     ];
 
-    for (const [col, type] of newCols) {
-      if (!cols.includes(col)) {
+    for (const [col, type] of newVCols) {
+      if (!vCols.includes(col)) {
         db.exec(`ALTER TABLE visitors ADD COLUMN ${col} ${type};`);
         console.log(`[DB] Added missing column visitors.${col}`);
       }
     }
+
+    const sCols = db.prepare("PRAGMA table_info(sessions)").all().map(c => c.name);
+    const newSCols = [
+      ['is_bot', 'INTEGER DEFAULT 0'],
+      ['is_headless', 'INTEGER DEFAULT 0'],
+      ['bot_name', 'TEXT'],
+    ];
+
+    for (const [col, type] of newSCols) {
+      if (!sCols.includes(col)) {
+        db.exec(`ALTER TABLE sessions ADD COLUMN ${col} ${type};`);
+        console.log(`[DB] Added missing column sessions.${col}`);
+      }
+    }
   } catch (e) {
-    console.warn('[DB] Visitors table migration note:', e.message);
+    console.warn('[DB] Migration note:', e.message);
   }
 }
 

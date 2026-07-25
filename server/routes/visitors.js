@@ -48,7 +48,8 @@ router.get('/', (req, res) => {
       s.browser, s.browser_version, s.os, s.device_type,
       s.duration_seconds, s.active_time_seconds, s.engagement_score,
       s.status, s.is_bounce, s.is_returning,
-      s.referrer_domain, s.landing_url, s.page_views, s.total_clicks, s.max_scroll_depth
+      s.referrer_domain, s.landing_url, s.page_views, s.total_clicks, s.max_scroll_depth,
+      s.is_bot, s.is_headless, s.bot_name
     FROM sessions s
     ${where}
     ORDER BY s.started_at DESC
