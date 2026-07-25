@@ -29,6 +29,16 @@ const App = (() => {
     return new Date(iso).toLocaleString();
   }
 
+  function fmtDateTimeExact(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleString(undefined, {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+    });
+  }
+
   function fmtDateShort(iso) {
     if (!iso) return '—';
     return new Date(iso).toLocaleDateString();
@@ -329,7 +339,7 @@ const App = (() => {
 
   return {
     boot, navigate, registerPage, showToast, showModal,
-    fmt, fmtTime, fmtDate, fmtDateShort, timeAgo,
+    fmt, fmtTime, fmtDate, fmtDateTimeExact, fmtDateShort, timeAgo,
     flagEmoji, deviceIcon, browserIcon, escapeHtml,
   };
 })();

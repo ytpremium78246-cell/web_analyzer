@@ -39,13 +39,16 @@ App.registerPage('visitor-report', {
       body.innerHTML = `
         <!-- Identity + Network row -->
         <div class="grid-3 mb-6">
-          ${this.infoCard('👤 Identity', [
-            ['Visitor ID', v.id?.slice(0,12) + '…'],
-            ['First Seen', App.fmtDate(v.first_seen)],
-            ['Last Seen', App.fmtDate(v.last_seen)],
+          ${this.infoCard('👤 Visitor & Timing Details', [
+            ['Visitor ID', v.id?.slice(0,16) + '…'],
+            ['Site Opened At (Entry)', App.fmtDateTimeExact(s?.started_at || v.first_seen)],
+            ['Site Closed At (Exit)', s?.ended_at ? App.fmtDateTimeExact(s.ended_at) : (s?.status === 'active' ? '🟢 Active Right Now' : App.fmtDateTimeExact(v.last_seen))],
+            ['Exact Total Duration', s ? App.fmtTime(s.duration_seconds) : '—'],
+            ['Active Reading Time', s ? App.fmtTime(s.active_time_seconds) : '—'],
+            ['First Seen Date', App.fmtDateTimeExact(v.first_seen)],
+            ['Last Seen Date', App.fmtDateTimeExact(v.last_seen)],
             ['Total Visits', v.total_visits],
-            ['Total Sessions', v.total_sessions],
-            ['Returning', v.is_returning ? 'Yes ✓' : 'New visitor'],
+            ['Returning Visitor', v.is_returning ? 'Yes ✓' : 'New Visitor'],
           ])}
           ${this.infoCard('🌐 Network & Location', [
             ['Country', (s || v) ? `${App.flagEmoji(s?.country_code || v?.country_code)} ${s?.country || v?.country || '—'}` : '—'],

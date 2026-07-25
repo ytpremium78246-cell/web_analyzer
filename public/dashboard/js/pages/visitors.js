@@ -159,7 +159,8 @@ App.registerPage('visitors', {
             <div style="font-size:11px;color:var(--text-muted)">${r.isReturning ? '🔄 Returning' : '✨ New'}</div>
           </td>
           <td>
-            <div style="font-size:12px">${App.fmtDate(r.timestamp)}</div>
+            <div style="font-size:12px;font-weight:500" title="Opened Site At">🟢 ${App.fmtDateTimeExact(r.timestamp)}</div>
+            <div style="font-size:11px;color:var(--text-muted)" title="Closed Site At">🔴 ${r.ended_at ? App.fmtDateTimeExact(r.ended_at) : (isLive ? 'Active Right Now' : '—')}</div>
           </td>
           <td>
             <div style="display:flex;align-items:center;gap:6px">
