@@ -102,12 +102,13 @@ router.post('/init', async (req, res) => {
 
     if (!visitor) {
       run(`
-        INSERT INTO visitors (id, website_id, fingerprint, country, country_code, region, city,
-          browser, browser_version, os, device_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO visitors (id, website_id, fingerprint, country, country_code, region, city, isp, asn, timezone, language,
+          browser, browser_version, browser_engine, os, os_version, device_type, screen_resolution, viewport_size, touch_support, dark_mode)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [visitorId, site.id, n(fingerprint),
-        n(geo.country), n(geo.country_code), n(geo.region), n(geo.city),
-        n(ua.browser), n(ua.browserVersion), n(ua.os), n(ua.deviceType)]);
+        n(geo.country), n(geo.country_code), n(geo.region), n(geo.city), n(geo.isp), n(geo.asn), n(geo.timezone), n(language),
+        n(ua.browser), n(ua.browserVersion), n(ua.browserEngine), n(ua.os), n(ua.osVersion), n(ua.deviceType),
+        n(screenResolution), n(viewportSize), touchSupport ? 1 : 0, darkMode ? 1 : 0]);
     } else {
       // Update visitor with latest info
       run(`
@@ -116,11 +117,13 @@ router.post('/init', async (req, res) => {
           total_visits = total_visits + 1,
           total_sessions = total_sessions + 1,
           is_returning = 1,
-          country = ?, country_code = ?, region = ?, city = ?,
-          browser = ?, browser_version = ?, os = ?, device_type = ?
+          country = ?, country_code = ?, region = ?, city = ?, isp = ?, asn = ?, timezone = ?, language = ?,
+          browser = ?, browser_version = ?, browser_engine = ?, os = ?, os_version = ?, device_type = ?,
+          screen_resolution = ?, viewport_size = ?, touch_support = ?, dark_mode = ?
         WHERE id = ?
-      `, [n(geo.country), n(geo.country_code), n(geo.region), n(geo.city),
-        n(ua.browser), n(ua.browserVersion), n(ua.os), n(ua.deviceType), visitorId]);
+      `, [n(geo.country), n(geo.country_code), n(geo.region), n(geo.city), n(geo.isp), n(geo.asn), n(geo.timezone), n(language),
+        n(ua.browser), n(ua.browserVersion), n(ua.browserEngine), n(ua.os), n(ua.osVersion), n(ua.deviceType),
+        n(screenResolution), n(viewportSize), touchSupport ? 1 : 0, darkMode ? 1 : 0, visitorId]);
     }
 
     // ── Session number for this visitor ──

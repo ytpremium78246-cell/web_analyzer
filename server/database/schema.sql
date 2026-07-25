@@ -43,16 +43,26 @@ CREATE TABLE IF NOT EXISTS visitors (
   total_visits    INTEGER NOT NULL DEFAULT 1,
   total_sessions  INTEGER NOT NULL DEFAULT 1,
   is_returning    INTEGER NOT NULL DEFAULT 0,
-  -- Geo (from most recent session)
-  country         TEXT,
-  country_code    TEXT,
-  region          TEXT,
-  city            TEXT,
-  -- Device (from most recent session)
-  browser         TEXT,
-  browser_version TEXT,
-  os              TEXT,
-  device_type     TEXT
+  -- Geo & Network (from most recent session)
+  country           TEXT,
+  country_code      TEXT,
+  region            TEXT,
+  city              TEXT,
+  isp               TEXT,
+  asn               TEXT,
+  timezone          TEXT,
+  language          TEXT,
+  -- Device & Environment (from most recent session)
+  browser           TEXT,
+  browser_version   TEXT,
+  browser_engine    TEXT,
+  os                TEXT,
+  os_version        TEXT,
+  device_type       TEXT,
+  screen_resolution TEXT,
+  viewport_size     TEXT,
+  touch_support     INTEGER DEFAULT 0,
+  dark_mode         INTEGER DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_visitors_website ON visitors(website_id);
 CREATE INDEX IF NOT EXISTS idx_visitors_fingerprint ON visitors(fingerprint);

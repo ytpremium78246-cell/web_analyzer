@@ -58,7 +58,35 @@ function initSchema() {
       }
     }
   }
+  migrateVisitorsTable();
   console.log('[DB] Schema initialized');
+}
+
+function migrateVisitorsTable() {
+  try {
+    const cols = db.prepare("PRAGMA table_info(visitors)").all().map(c => c.name);
+    const newCols = [
+      ['isp', 'TEXT'],
+      ['asn', 'TEXT'],
+      ['timezone', 'TEXT'],
+      ['language', 'TEXT'],
+      ['browser_engine', 'TEXT'],
+      ['os_version', 'TEXT'],
+      ['screen_resolution', 'TEXT'],
+      ['viewport_size', 'TEXT'],
+      ['touch_support', 'INTEGER DEFAULT 0'],
+      ['dark_mode', 'INTEGER DEFAULT 0'],
+    ];
+
+    for (const [col, type] of newCols) {
+      if (!cols.includes(col)) {
+        db.exec(`ALTER TABLE visitors ADD COLUMN ${col} ${type};`);
+        console.log(`[DB] Added missing column visitors.${col}`);
+      }
+    }
+  } catch (e) {
+    console.warn('[DB] Visitors table migration note:', e.message);
+  }
 }
 
 // ── Seeding ────────────────────────────────────────────────

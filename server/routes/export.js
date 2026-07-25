@@ -215,7 +215,9 @@ router.get('/visitors', async (req, res) => {
 
   const rows = all(`
     SELECT id, fingerprint, first_seen, last_seen, total_visits, total_sessions,
-           is_returning, country, region, city, browser, os, device_type
+           is_returning, country, region, city, isp, asn, timezone, language,
+           browser, browser_version, browser_engine, os, os_version, device_type,
+           screen_resolution, viewport_size, touch_support, dark_mode
     FROM visitors ${filter}
     ORDER BY last_seen DESC LIMIT 10000
   `, params);

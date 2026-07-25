@@ -48,23 +48,23 @@ App.registerPage('visitor-report', {
             ['Returning', v.is_returning ? 'Yes ✓' : 'New visitor'],
           ])}
           ${this.infoCard('🌐 Network & Location', [
-            ['Country', s ? `${App.flagEmoji(s.country_code)} ${s.country || '—'}` : '—'],
-            ['Region', s?.region || '—'],
-            ['City', s?.city || '—'],
-            ['ISP', s?.isp || '—'],
-            ['ASN', s?.asn || '—'],
-            ['Timezone', s?.timezone || '—'],
-            ['Language', s?.language || '—'],
+            ['Country', (s || v) ? `${App.flagEmoji(s?.country_code || v?.country_code)} ${s?.country || v?.country || '—'}` : '—'],
+            ['Region', s?.region || v?.region || '—'],
+            ['City', s?.city || v?.city || '—'],
+            ['ISP', s?.isp || v?.isp || '—'],
+            ['ASN', s?.asn || v?.asn || '—'],
+            ['Timezone', s?.timezone || v?.timezone || '—'],
+            ['Language', s?.language || v?.language || '—'],
           ])}
           ${this.infoCard('💻 Device', [
-            ['Browser', s ? `${App.browserIcon(s.browser)} ${s.browser} ${s.browser_version || ''}` : '—'],
-            ['Engine', s?.browser_engine || '—'],
-            ['OS', s?.os || '—'],
-            ['Device', s ? `${App.deviceIcon(s.device_type)} ${s.device_type}` : '—'],
-            ['Screen', s?.screen_resolution || '—'],
-            ['Viewport', s?.viewport_size || '—'],
-            ['Touch', s?.touch_support ? `Yes (${s.max_touch_points} pts)` : 'No'],
-            ['Dark Mode', s?.dark_mode ? 'Enabled' : 'Disabled'],
+            ['Browser', (s || v) ? `${App.browserIcon(s?.browser || v?.browser)} ${s?.browser || v?.browser} ${s?.browser_version || v?.browser_version || ''}` : '—'],
+            ['Engine', s?.browser_engine || v?.browser_engine || '—'],
+            ['OS', s?.os || v?.os || '—'],
+            ['Device', (s || v) ? `${App.deviceIcon(s?.device_type || v?.device_type)} ${s?.device_type || v?.device_type}` : '—'],
+            ['Screen', s?.screen_resolution || v?.screen_resolution || '—'],
+            ['Viewport', s?.viewport_size || v?.viewport_size || '—'],
+            ['Touch', (s?.touch_support || v?.touch_support) ? 'Yes' : 'No'],
+            ['Dark Mode', (s?.dark_mode || v?.dark_mode) ? 'Enabled' : 'Disabled'],
           ])}
         </div>
 
