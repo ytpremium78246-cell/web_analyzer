@@ -66,6 +66,7 @@ function migrateVisitorsTable() {
   try {
     const cols = db.prepare("PRAGMA table_info(visitors)").all().map(c => c.name);
     const newCols = [
+      ['ip_address', 'TEXT'],
       ['isp', 'TEXT'],
       ['asn', 'TEXT'],
       ['timezone', 'TEXT'],

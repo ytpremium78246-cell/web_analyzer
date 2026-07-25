@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS visitors (
   total_sessions  INTEGER NOT NULL DEFAULT 1,
   is_returning    INTEGER NOT NULL DEFAULT 0,
   -- Geo & Network (from most recent session)
+  ip_address        TEXT,
   country           TEXT,
   country_code      TEXT,
   region            TEXT,

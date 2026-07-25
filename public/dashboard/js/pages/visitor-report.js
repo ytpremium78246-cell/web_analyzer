@@ -51,6 +51,7 @@ App.registerPage('visitor-report', {
             ['Returning Visitor', v.is_returning ? 'Yes ✓' : 'New Visitor'],
           ])}
           ${this.infoCard('🌐 Network & Location', [
+            ['Real IP Address', s?.ip_address || v?.ip_address || '—'],
             ['Country', (s || v) ? `${App.flagEmoji(s?.country_code || v?.country_code)} ${s?.country || v?.country || '—'}` : '—'],
             ['Region', s?.region || v?.region || '—'],
             ['City', s?.city || v?.city || '—'],

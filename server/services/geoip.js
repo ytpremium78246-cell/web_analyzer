@@ -95,11 +95,28 @@ async function lookupLocal(ip) {
 
 /** Get the real client IP from request headers (proxy-aware) */
 function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (forwarded) {
-    return forwarded.split(',')[0].trim();
+  const headers = [
+    'cf-connecting-ip',    // Cloudflare
+    'true-client-ip',      // Cloudflare / Akamai
+    'x-client-ip',         // Akamai
+    'x-real-ip',           // Nginx / Render / Railway
+    'x-forwarded-for',     // Standard proxy header chain
+    'fastly-client-ip',    // Fastly
+  ];
+
+  for (const header of headers) {
+    const val = req.headers[header];
+    if (val && typeof val === 'string') {
+      const first = val.split(',')[0].trim();
+      if (first) {
+        // Strip IPv4-mapped IPv6 prefix ::ffff:
+        return first.replace(/^::ffff:/i, '');
+      }
+    }
   }
-  return req.headers['x-real-ip'] || req.connection?.remoteAddress || req.ip || '127.0.0.1';
+
+  const rawIp = req.connection?.remoteAddress || req.socket?.remoteAddress || req.ip || '127.0.0.1';
+  return String(rawIp).replace(/^::ffff:/i, '');
 }
 
 /** Anonymize IP by zeroing the last octet (IPv4) or last 80 bits (IPv6) */
