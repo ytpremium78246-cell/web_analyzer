@@ -4,8 +4,8 @@
   "description": "Self-hosted real-time traffic analytics & visitor intelligence platform",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "node --watch server/index.js",
+    "start": "node --experimental-sqlite server/index.js",
+    "dev": "node --experimental-sqlite --watch server/index.js",
     "setup": "node server/database/setup.js",
     "test": "echo \"No tests configured\" && exit 0"
   },

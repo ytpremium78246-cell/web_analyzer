@@ -5,13 +5,13 @@ services:
     region: oregon
     plan: free
     buildCommand: npm install
-    startCommand: node server/index.js
+    startCommand: node --experimental-sqlite server/index.js
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
-        value: 22.5.0
+        value: 22.x
       - key: JWT_SECRET
         generateValue: true     # Render auto-generates a secure random value
       - key: ADMIN_USERNAME
